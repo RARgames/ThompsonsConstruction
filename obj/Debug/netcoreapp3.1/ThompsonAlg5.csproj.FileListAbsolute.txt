@@ -1,0 +1,13 @@
+C:\Users\RAR\Desktop\eocte_proj\ThompsonAlg5\bin\Debug\netcoreapp3.1\ThompsonAlg5.exe
+C:\Users\RAR\Desktop\eocte_proj\ThompsonAlg5\bin\Debug\netcoreapp3.1\ThompsonAlg5.deps.json
+C:\Users\RAR\Desktop\eocte_proj\ThompsonAlg5\bin\Debug\netcoreapp3.1\ThompsonAlg5.runtimeconfig.json
+C:\Users\RAR\Desktop\eocte_proj\ThompsonAlg5\bin\Debug\netcoreapp3.1\ThompsonAlg5.runtimeconfig.dev.json
+C:\Users\RAR\Desktop\eocte_proj\ThompsonAlg5\bin\Debug\netcoreapp3.1\ThompsonAlg5.dll
+C:\Users\RAR\Desktop\eocte_proj\ThompsonAlg5\bin\Debug\netcoreapp3.1\ThompsonAlg5.pdb
+C:\Users\RAR\Desktop\eocte_proj\ThompsonAlg5\obj\Debug\netcoreapp3.1\ThompsonAlg5.csprojAssemblyReference.cache
+C:\Users\RAR\Desktop\eocte_proj\ThompsonAlg5\obj\Debug\netcoreapp3.1\ThompsonAlg5.csproj.CoreCompileInputs.cache
+C:\Users\RAR\Desktop\eocte_proj\ThompsonAlg5\obj\Debug\netcoreapp3.1\ThompsonAlg5.AssemblyInfoInputs.cache
+C:\Users\RAR\Desktop\eocte_proj\ThompsonAlg5\obj\Debug\netcoreapp3.1\ThompsonAlg5.AssemblyInfo.cs
+C:\Users\RAR\Desktop\eocte_proj\ThompsonAlg5\obj\Debug\netcoreapp3.1\ThompsonAlg5.dll
+C:\Users\RAR\Desktop\eocte_proj\ThompsonAlg5\obj\Debug\netcoreapp3.1\ThompsonAlg5.pdb
+C:\Users\RAR\Desktop\eocte_proj\ThompsonAlg5\obj\Debug\netcoreapp3.1\ThompsonAlg5.genruntimeconfig.cache

@@ -1,0 +1,12 @@
+C:\DATA\Studia\Projects\ECOTE\bin\Debug\netcoreapp3.1\ThompsonAlg.exe
+C:\DATA\Studia\Projects\ECOTE\bin\Debug\netcoreapp3.1\ThompsonAlg.deps.json
+C:\DATA\Studia\Projects\ECOTE\bin\Debug\netcoreapp3.1\ThompsonAlg.runtimeconfig.json
+C:\DATA\Studia\Projects\ECOTE\bin\Debug\netcoreapp3.1\ThompsonAlg.runtimeconfig.dev.json
+C:\DATA\Studia\Projects\ECOTE\bin\Debug\netcoreapp3.1\ThompsonAlg.dll
+C:\DATA\Studia\Projects\ECOTE\bin\Debug\netcoreapp3.1\ThompsonAlg.pdb
+C:\DATA\Studia\Projects\ECOTE\obj\Debug\netcoreapp3.1\ThompsonAlg.csproj.CoreCompileInputs.cache
+C:\DATA\Studia\Projects\ECOTE\obj\Debug\netcoreapp3.1\ThompsonAlg.AssemblyInfoInputs.cache
+C:\DATA\Studia\Projects\ECOTE\obj\Debug\netcoreapp3.1\ThompsonAlg.AssemblyInfo.cs
+C:\DATA\Studia\Projects\ECOTE\obj\Debug\netcoreapp3.1\ThompsonAlg.dll
+C:\DATA\Studia\Projects\ECOTE\obj\Debug\netcoreapp3.1\ThompsonAlg.pdb
+C:\DATA\Studia\Projects\ECOTE\obj\Debug\netcoreapp3.1\ThompsonAlg.genruntimeconfig.cache

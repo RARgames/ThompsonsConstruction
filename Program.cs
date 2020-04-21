@@ -90,36 +90,30 @@ namespace ThompsonAlg
 
     public class NFA //Class for storing NFA information
     {
-        private List<int> statesIdList; //List of int that stores all possible states of NFA
         private List<Transition> transitionsList; //List of all possible transitions of NFA
         private int finalStateId; //Id of a final state of NFA
-
-        private NFA(int size) //Constructor for empty NFA of a given size
+        private int StateCount //Returns number of states of NFA
         {
-            statesIdList = new List<int>();
-            transitionsList = new List<Transition>();
-            SetStateSize(size);
-            finalStateId = 0;
-        }
-
-        private NFA(char c) //Constructor for complete NFA with 1
-        {
-            statesIdList = new List<int>();
-            transitionsList = new List<Transition>();
-            transitionsList.Add(new Transition(0, 1, c));
-            SetStateSize(2);
-            finalStateId = 1;
-        }
-
-        private void SetStateSize(int size) //BUG TUTAJ komenty
-        {
-            for (int i = 0; i < size; i++)
+            get
             {
-                statesIdList.Add(i);
+                return finalStateId + 1;
             }
         }
 
-        public override string ToString()
+        private NFA() //Constructor for empty NFA
+        {
+            transitionsList = new List<Transition>();
+            finalStateId = 0;
+        }
+
+        private NFA(char c) //Constructor for complete NFA with 1 transition
+        {
+            transitionsList = new List<Transition>();
+            transitionsList.Add(new Transition(0, 1, c));
+            finalStateId = 1;
+        }
+
+        public override string ToString() //Overridden method ToString() for showing how NFA looks like
         {
             string output = "\n";
             foreach (var t in transitionsList)
@@ -130,75 +124,54 @@ namespace ThompsonAlg
             return output;
         }
 
-        private static NFA Concat(NFA part1, NFA part2)
+        private static NFA Concat(NFA part1, NFA part2) //Concatenation operator
         {
-            NFA result = new NFA(part1.statesIdList.Count + part2.statesIdList.Count - 2);
-
-            result.finalStateId = part1.statesIdList.Count + part2.statesIdList.Count - 2; //Set final state id
-
+            NFA result = new NFA(); //Create empty NFA
+            result.finalStateId = part1.StateCount + part2.StateCount - 2; //Set final state id
             result.transitionsList = new List<Transition>(part1.transitionsList); //Set result transitions list to part1 transitions list 
             foreach (var t in part2.transitionsList)
             {
-                result.transitionsList.Add(new Transition(t.fromStateId + part1.statesIdList.Count - 1, t.toStateId + part1.statesIdList.Count - 1, t.symbol)); //Copy part2 transitions to part1
+                result.transitionsList.Add(new Transition(t.fromStateId + part1.finalStateId, t.toStateId + part1.finalStateId, t.symbol)); //Copy part2 transitions to part1
             }
-
-            result.statesIdList = new List<int>(part1.statesIdList); //Set states id list to part1 states id list 
-
-            bool first = true;
-            foreach (var i in part2.statesIdList)
-            {
-                if (first)
-                {
-                    first = false;
-                    continue;
-                }
-                result.statesIdList.Add(i + part1.statesIdList.Count + 1); //Copy part2 state list into part1 (without first element)
-            }
-
             return result;
         }
 
-        private static NFA Star(NFA part)
+        private static NFA Star(NFA part) //Star operator
         {
-            NFA result = new NFA(part.statesIdList.Count + 2);
-
-            result.finalStateId = part.statesIdList.Count + 1;
-
+            NFA result = new NFA(); //Create empty NFA
+            result.finalStateId = part.StateCount + 1; //Set final state id
             result.transitionsList.Add(new Transition(0, 1, 'E')); //Create new start transition
             foreach (var t in part.transitionsList)
             {
                 result.transitionsList.Add(new Transition(t.fromStateId + 1, t.toStateId + 1, t.symbol)); //Copy all existing transitions
             }
-            result.transitionsList.Add(new Transition(part.statesIdList.Count, part.statesIdList.Count + 1, 'E')); //Add transition from n final state to new final state
-            result.transitionsList.Add(new Transition(part.statesIdList.Count, 1, 'E')); //Add loop transition from last state of n to initial state of n
-            result.transitionsList.Add(new Transition(0, part.statesIdList.Count + 1, 'E')); //Add transition from new inital state to new final state
-
+            result.transitionsList.Add(new Transition(part.StateCount, part.StateCount + 1, 'E')); //Add transition from n final state to new final state
+            result.transitionsList.Add(new Transition(part.StateCount, 1, 'E')); //Add loop transition from last state of n to initial state of n
+            result.transitionsList.Add(new Transition(0, part.StateCount + 1, 'E')); //Add transition from new inital state to new final state
             return result;
         }
 
         private static NFA Union(NFA part1, NFA part2)
         {
-            NFA result = new NFA(part1.statesIdList.Count + part2.statesIdList.Count + 2);
-
+            NFA result = new NFA(); //Create empty NFA
+            result.finalStateId = part1.StateCount + part2.StateCount + 1; //Set final state id
             result.transitionsList.Add(new Transition(0, 1, 'E')); //Add new initial transition
             foreach (var t in part1.transitionsList)
             {
                 result.transitionsList.Add(new Transition(t.fromStateId + 1, t.toStateId + 1, t.symbol)); //Copy exisiting transitions from part1
             }
-            result.transitionsList.Add(new Transition(part1.statesIdList.Count, part1.statesIdList.Count + part2.statesIdList.Count + 1, 'E')); //Add transition from last state of part1 to new final state
+            result.transitionsList.Add(new Transition(part1.StateCount, part1.StateCount + part2.StateCount + 1, 'E')); //Add transition from last state of part1 to new final state
 
-            result.transitionsList.Add(new Transition(0, part1.statesIdList.Count + 1, 'E')); //Add transition from start to part2 start
+            result.transitionsList.Add(new Transition(0, part1.StateCount + 1, 'E')); //Add transition from start to part2 start
             foreach (var t in part2.transitionsList)
             {
-                result.transitionsList.Add(new Transition(t.fromStateId + part1.statesIdList.Count + 1, t.toStateId + part1.statesIdList.Count + 1, t.symbol)); //Copy exisiting transitions from part2
+                result.transitionsList.Add(new Transition(t.fromStateId + part1.StateCount + 1, t.toStateId + part1.StateCount + 1, t.symbol)); //Copy exisiting transitions from part2
             }
-            result.transitionsList.Add(new Transition(part2.statesIdList.Count + part1.statesIdList.Count, part1.statesIdList.Count + part2.statesIdList.Count + 1, 'E')); //Add transition from end of part2 to new final state
-
-            result.finalStateId = part1.statesIdList.Count + part2.statesIdList.Count + 1; //Set final to the new one
+            result.transitionsList.Add(new Transition(part2.StateCount + part1.StateCount, part1.StateCount + part2.StateCount + 1, 'E')); //Add transition from end of part2 to new final state            
             return result;
         }
 
-        private static int OperatorPrecedence(char c)
+        private static int OperatorPrecedence(char c) //Method returning operator precedence value - default value will never be used
         {
             switch (c)
             {
@@ -213,10 +186,10 @@ namespace ThompsonAlg
             }
         }
 
-        private static string ToPostfix(string regex)
+        private static string ToPostfix(string regex) //Method that creates postfix from regex
         {
             string addedDot = "";
-            for (int i = 0; i < regex.Length; i++)
+            for (int i = 0; i < regex.Length; i++) //Loop for adding dots where needed, '.' is a symbol used for concatenation
             {
                 char c = regex[i];
                 addedDot += c;
@@ -238,37 +211,37 @@ namespace ThompsonAlg
             string output = "";
             Stack<char> operatorStack = new Stack<char>();
 
-            foreach (var c in addedDot)
+            foreach (var c in addedDot) //Loop for convertion to postfix
             {
-                if (c == '.' || c == '|' || c == '*')
+                if (c == '.' || c == '|' || c == '*') //Check for given symbols
                 {
-                    while (operatorStack.Count != 0 && operatorStack.Peek() != '(' && OperatorPrecedence(operatorStack.Peek()) >= OperatorPrecedence(c))
+                    while (operatorStack.Count != 0 && operatorStack.Peek() != '(' && OperatorPrecedence(operatorStack.Peek()) >= OperatorPrecedence(c)) //Loop that adds all symbols to the output until condition is met
                     {
                         output += operatorStack.Pop();
                     }
-                    operatorStack.Push(c);
+                    operatorStack.Push(c); //Add symbol to operatorStack
                 }
-                else if (c == '(' || c == ')')
+                else if (c == '(' || c == ')') //Check for given symbols
                 {
-                    if (c == '(')
+                    if (c == '(') //Check for given symbol
                     {
-                        operatorStack.Push(c);
+                        operatorStack.Push(c); //Add symbol to operatorStack
                     }
                     else
                     {
-                        while (operatorStack.Count > 1 && operatorStack.Peek() != '(')
+                        while (operatorStack.Count > 1 && operatorStack.Peek() != '(') //Loop that adds all symbols to the output until condition is met
                         {
                             output += operatorStack.Pop();
                         }
-                        operatorStack.Pop();
+                        operatorStack.Pop(); //Remove last symbol from operatorStack - '(' or ')'
                     }
                 }
                 else
                 {
-                    output += c;
+                    output += c; //Add letter/digit to output
                 }
             }
-            while (operatorStack.Count != 0)
+            while (operatorStack.Count != 0) //Add all elements from the stack to output
             {
                 output += operatorStack.Pop();
             }
@@ -277,9 +250,9 @@ namespace ThompsonAlg
         }
 
 
-        public static NFA Create(string regex)
+        public static NFA Create(string regex) //Main method for creating NFA of given regex
         {
-            if (!Regex.IsValidRegex(regex))
+            if (!Regex.IsValidRegex(regex)) //Check if regex is valid
             {
                 Console.WriteLine("Invalid regex!");
                 return null; //Return null instead of error to allow automated tests
@@ -288,61 +261,61 @@ namespace ThompsonAlg
             NFA nfa;
             Stack<NFA> nfaStack = new Stack<NFA>();
             string postfix = ToPostfix(regex);
-            foreach (var c in postfix)
+            foreach (var c in postfix) //Simple loop for creating NFA using Thompson's algorithm
             {
                 switch (c)
                 {
                     case '*':
-                        nfaStack.Push(Star(nfaStack.Pop()));
+                        nfaStack.Push(Star(nfaStack.Pop())); //Add Star NFA of last NFA on the stack to the stack, removing last NFA
                         break;
                     case '|':
-                        nfa = nfaStack.Pop();
-                        nfaStack.Push(Union(nfaStack.Pop(), nfa));
+                        nfa = nfaStack.Pop(); //Remove last NFA on the stack
+                        nfaStack.Push(Union(nfaStack.Pop(), nfa)); //Add union of the last NFA on the stack and removed one to the stack
                         break;
                     case '.':
-                        nfa = nfaStack.Pop();
-                        nfaStack.Push(Concat(nfaStack.Pop(), nfa));
+                        nfa = nfaStack.Pop(); //Remove last NFA on the stack
+                        nfaStack.Push(Concat(nfaStack.Pop(), nfa)); //Add concatenation of the last NFA on the stack and removed one to the stack
                         break;
                     default:
-                        nfaStack.Push(new NFA(c));
+                        nfaStack.Push(new NFA(c)); //Add new NFA for 1 symbol
                         break;
                 }
             }
-            if (string.IsNullOrEmpty(postfix))
+            if (string.IsNullOrEmpty(postfix)) //If postfix is empty it should return Epsilon NFA
             {
                 return new NFA('E');
             }
 
-            return nfaStack.Pop();
+            return nfaStack.Pop(); //Return the last element of the stack - combined NFA
         }
 
-        private List<int>[] nextStateIdList;
-        private List<Transition> usedETransitions;
+        private List<int>[] nextStateIdList; //Array of lists of next state id, for checking in the interation for next letter of checked string
+        private List<Transition> usedETransitions; //List of epsilon transitions to avoid infinite loop in current step of string checking
 
-        public bool CheckString(string str)
+        public bool CheckString(string str) //Method that checks if the given string is a match for regex
         {
-            int currentStateId;
+            int currentStateId; //Currently checked id
 
-            nextStateIdList = new List<int>[str.Length + 1];
+            nextStateIdList = new List<int>[str.Length + 1]; //Setting the length of an array
 
             for (int k = 0; k < str.Length + 1; k++)
             {
                 if (k == 0)
                 {
-                    nextStateIdList[0] = new List<int> { 0 }; //Set initial state
+                    nextStateIdList[0] = new List<int> { 0 }; //Initialization of first list
                 }
                 else
                 {
-                    nextStateIdList[k] = new List<int>();
+                    nextStateIdList[k] = new List<int>(); //Initialization of each list in an array
                 }
             }
-            usedETransitions = new List<Transition>();
+            usedETransitions = new List<Transition>(); //Initialization of the list of epsilon transitions
 
-            for (int i = 0; i < str.Length + 1; i++)
+            for (int i = 0; i < str.Length + 1; i++) //Loop for checking each letter of checked string
             {
-                usedETransitions.Clear();
+                usedETransitions.Clear(); //Clear the list of epsilon transitions for each iteration
 
-                for (int j = 0; j < nextStateIdList[i].Count; j++)
+                for (int j = 0; j < nextStateIdList[i].Count; j++) //Loop for checking all possible steps for the current iteration
                 {
                     currentStateId = nextStateIdList[i][j];
 
@@ -356,12 +329,13 @@ namespace ThompsonAlg
             return false;
         }
 
-        private bool CheckOtherPos(int currentStateId, string str, int i, bool usedSymbolTransition)
+        private bool CheckOtherPos(int currentStateId, string str, int i, bool usedSymbolTransition) //2nd method for recursive NFA string matching
         {
-            foreach (var t in transitionsList)
+            foreach (var t in transitionsList) //Loop that checks all possible transitions of NFA
             {
-                if (t.fromStateId == currentStateId)
+                if (t.fromStateId == currentStateId) //From state should be equal to currently checked state to progress
                 {
+                    //Setting bools in each iteration for easier check logic
                     bool isEmptyStr = string.IsNullOrEmpty(str);
                     bool isEpsTrans = (t.symbol == 'E');
                     bool isCurrCharTrans;
@@ -376,7 +350,7 @@ namespace ThompsonAlg
                         isTestingLastChar = true;
                         isCurrCharTrans = isEpsTrans;
                     }
-                    if (isCurrCharTrans && !isEpsTrans)
+                    if (isCurrCharTrans && !isEpsTrans) //Cjecking if symbol transition is used, or just general epsilon transition
                     {
                         if (usedSymbolTransition)
                         {
@@ -385,39 +359,39 @@ namespace ThompsonAlg
                         usedSymbolTransition = true;
                     }
 
-                    if (isEpsTrans || isCurrCharTrans)
+                    if (isEpsTrans || isCurrCharTrans) //Possible true end check if is epsilon or current symbol transition
                     {
-                        if (t.toStateId == finalStateId && isTestingLastChar)
+                        if (t.toStateId == finalStateId && isTestingLastChar) //if final state matches and is last char of a tested string
                         {
-                            if (usedSymbolTransition || isEmptyStr)
+                            if (usedSymbolTransition || isEmptyStr) //To return true it has to be empty or used symbol transition
                             {
                                 return true;
                             }
                         }
                     }
-                    
-                    if (isCurrCharTrans)
+
+                    if (isCurrCharTrans) //Possibilities for next checks if is current symbol transition
                     {
                         if (!usedSymbolTransition)
                         {
-                            if (CheckOtherPos(t.toStateId, str, i + 1, usedSymbolTransition)) { return true; }
+                            if (CheckOtherPos(t.toStateId, str, i + 1, usedSymbolTransition)) { return true; } //Other check for the same iteration
                         }
                         else
                         {
-                            if (isTestingLastChar)
+                            if (isTestingLastChar) //If it's a last char and used transition symbol, check for possible epsilon transitions in next step
                             {
-                                if (CheckOtherPos(t.toStateId, str, i, usedSymbolTransition)) { return true; }
+                                if (CheckOtherPos(t.toStateId, str, i, usedSymbolTransition)) { return true; } //Other check for the same iteration
                             }
                             else
                             {
-                                nextStateIdList[i + 1].Add(t.toStateId);
+                                nextStateIdList[i + 1].Add(t.toStateId); //Other check for next iteration
                             }
                         }
                     }
-                    else if (isEpsTrans && usedETransitions.FindAll(e => e == t).Count < 2) //2nd part to only allow 2 reps of e transform
+                    else if (isEpsTrans && usedETransitions.FindAll(e => e == t).Count < 2)  //Possibilities for next checks if is epsilon transition, 2nd part of the check is only for allowing of 2 repetitions of epsilon transition
                     {
-                        usedETransitions.Add(t);
-                        if (CheckOtherPos(t.toStateId, str, i, usedSymbolTransition)) { return true; }
+                        usedETransitions.Add(t); //Add to used epsilon transitions list, after adding twice it will not check the same transition again
+                        if (CheckOtherPos(t.toStateId, str, i, usedSymbolTransition)) { return true; } //Other check for the same iteration
                     }
                 }
             }
@@ -429,6 +403,7 @@ namespace ThompsonAlg
     {
         static void Main(string[] args)
         {
+            //Auto testing
             AutoTester at = new AutoTester();
             Console.WriteLine("****** AUTO TEST START ******");
             Console.WriteLine("regex : string : match : STATUS");
@@ -551,6 +526,7 @@ namespace ThompsonAlg
             at.StatusFilterDisplay();
             Console.WriteLine("****** AUTO TEST END ******");
             Console.WriteLine();
+            //Manual testing loop
             Console.WriteLine("Input regex");
             var input = Console.ReadLine();
             NFA inputNFA = NFA.Create(input);
@@ -569,47 +545,47 @@ namespace ThompsonAlg
         }
     }
 
-    public class AutoTester
+    public class AutoTester //Class used for auto testing
     {
         private int testCount = 0, failCount = 0;
         private bool displayNFAOverride = false;
 
-        public AutoTester(bool displayNFA = false)
+        public AutoTester(bool displayNFA = false) //Constructor for autotester, which can have displaying NFAs forced
         {
             displayNFAOverride = displayNFA;
         }
 
-        public void AutoTest(string regex, string str, bool shouldReturn, bool displayNFA = false)
+        public void AutoTest(string regex, string str, bool shouldReturn, bool displayNFA = false) //Method for doing one auto test
         {
-            NFA autoTest = NFA.Create(regex);
+            NFA autoTest = NFA.Create(regex); //Create NFA for given regex
 
-            testCount++;
+            testCount++; //Increase test count
             if (autoTest != null)
             {
-                if (displayNFA || displayNFAOverride)
+                if (displayNFA || displayNFAOverride) //Show NFA if needed
                 {
                     Console.WriteLine(autoTest.ToString());
                 }
-                string status = "FAILED";
-                bool testStatus = autoTest.CheckString(str);
-                if (shouldReturn == testStatus)
+                string status = "FAILED"; //Default status
+                bool testStatus = autoTest.CheckString(str); //Check given string
+                if (shouldReturn == testStatus) //Compare responses
                 {
                     status = "OK";
                 }
-                Console.WriteLine(regex + " : " + str + " : " + testStatus + " :   " + status);
-                StatusFilter(status);
+                Console.WriteLine(regex + " : " + str + " : " + testStatus + " :   " + status); //Test output
+                StatusFilter(status); //Add to summary
             }
         }
 
         private void StatusFilter(string status)
-        { 
-            if (string.Compare(status, "OK") != 0)
+        {
+            if (string.Compare(status, "OK") != 0) //Count failed tests
             {
                 failCount++;
             }
         }
 
-        public void StatusFilterDisplay()
+        public void StatusFilterDisplay() //Method for displaying auto tests summary
         {
             if (failCount > 0)
             {
@@ -622,5 +598,3 @@ namespace ThompsonAlg
         }
     }
 }
-
-//TODO add comments

@@ -10,3 +10,4 @@ C:\DATA\Studia\Projects\ECOTE\obj\Debug\netcoreapp3.1\ThompsonAlg.AssemblyInfo.c
 C:\DATA\Studia\Projects\ECOTE\obj\Debug\netcoreapp3.1\ThompsonAlg.dll
 C:\DATA\Studia\Projects\ECOTE\obj\Debug\netcoreapp3.1\ThompsonAlg.pdb
 C:\DATA\Studia\Projects\ECOTE\obj\Debug\netcoreapp3.1\ThompsonAlg.genruntimeconfig.cache
+C:\DATA\Studia\Projects\ECOTE\obj\Debug\netcoreapp3.1\ThompsonAlg.csprojAssemblyReference.cache

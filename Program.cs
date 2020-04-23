@@ -60,6 +60,10 @@ namespace ThompsonAlg
                         return false;
                     }
                     invalidFlag2 = true;
+                    if (c == regex[regex.Length - 1]) //Last char cannot be |
+                    {
+                        return false;
+                    }
                 }
                 else
                 {
@@ -245,7 +249,6 @@ namespace ThompsonAlg
             {
                 output += operatorStack.Pop();
             }
-
             return output;
         }
 
